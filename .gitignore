@@ -7,3 +7,5 @@ target/
 /sdk_server.toml
 
 *.proto
+
+docker-compose.yml
