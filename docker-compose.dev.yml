@@ -1,68 +1,68 @@
----
 networks:
-  internal: null
-  public: null
+  internal:
+  public:
+
 services:
   yanagi-autopatch-server:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: yanagi-autopatch-server
-    depends_on:
-      - yanagi-surrealdb
+      args:
+        SERVICE: yanagi-autopatch-server
+    image: yanagi-autopatch-server:latest
     networks:
       - public
       - internal
     ports:
-      - '10000:10000'
+      - "10000:10000"
     restart: unless-stopped
+
   yanagi-dispatch-server:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: yanagi-dispatch-server
-    depends_on:
-      - yanagi-surrealdb
+      args:
+        SERVICE: yanagi-dispatch-server
+    image: yanagi-dispatch-server:latest
     networks:
       - public
       - internal
     ports:
-      - '10002:10002'
+      - "10002:10002"
     restart: unless-stopped
+
   yanagi-game-server:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: yanagi-game-server
-    depends_on:
-      - yanagi-surrealdb
+      args:
+        SERVICE: yanagi-game-server
+    image: yanagi-game-server:latest
     networks:
       - internal
     ports:
-      - '10101:10101'
+      - "10101:10101"
     restart: unless-stopped
+
   yanagi-gate-server:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: yanagi-gate-server
-    depends_on:
-      - yanagi-surrealdb
+      args:
+        SERVICE: yanagi-gate-server
+    image: yanagi-gate-server:latest
     networks:
       - public
       - internal
     ports:
-      - 20501:20501/udp
+      - "20501:20501/udp"
     restart: unless-stopped
+
   yanagi-sdk-server:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: yanagi-sdk-server
-    depends_on:
-      - yanagi-surrealdb
+      args:
+        SERVICE: yanagi-sdk-server
+    image: yanagi-sdk-server:latest
     network_mode: service:yanagi-surrealdb
     restart: unless-stopped
+
   yanagi-surrealdb:
     command: start --user root --pass root file:///data/surrealdb_data
     container_name: surrealdb
@@ -70,12 +70,8 @@ services:
     networks:
       - internal
     ports:
-      - '8000:8000'
+      - "8000:8000"
     restart: unless-stopped
-    user: '1000:1000'
+    user: "1000:1000"
     volumes:
-      - surrealdb_data:/data/surrealdb_data
-
-volumes:
-  surrealdb_data:
-    driver: local
+      - /mnt/r/Documents/Programming/Tools/Yanagi/surrealdb_data:/data/surrealdb_data

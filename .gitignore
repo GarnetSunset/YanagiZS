@@ -8,4 +8,3 @@ target/
 
 *.proto
 
-docker-compose.yml

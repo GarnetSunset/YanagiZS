@@ -1,3 +1,4 @@
+# Base builder stage
 FROM rust:alpine as builder
 
 WORKDIR /app
@@ -8,30 +9,20 @@ RUN apk add --no-cache musl-dev
 # Copy source code
 COPY . .
 
-# Build each binary target
-RUN cargo build --release --bin yanagi-autopatch-server
-RUN cargo build --release --bin yanagi-sdk-server
-RUN cargo build --release --bin yanagi-dispatch-server
-RUN cargo build --release --bin yanagi-gate-server
-RUN cargo build --release --bin yanagi-game-server
+# Build the specified service only
+ARG SERVICE
+RUN cargo build --release --bin ${SERVICE}
 
-# Create a minimal runtime image for each binary
-FROM alpine as yanagi-autopatch-server
-COPY --from=builder /app/target/release/yanagi-autopatch-server /usr/local/bin/
-CMD ["yanagi-autopatch-server"]
+# Final runtime stage
+FROM alpine:latest
+WORKDIR /app
 
-FROM alpine as yanagi-sdk-server
-COPY --from=builder /app/target/release/yanagi-sdk-server /usr/local/bin/
-CMD ["yanagi-sdk-server"]
+# Pass the SERVICE variable explicitly into the final stage
+ARG SERVICE
+ENV SERVICE=${SERVICE}
 
-FROM alpine as yanagi-dispatch-server
-COPY --from=builder /app/target/release/yanagi-dispatch-server /usr/local/bin/
-CMD ["yanagi-dispatch-server"]
+# Copy the binary of the specified service
+COPY --from=builder /app/target/release/${SERVICE} /usr/local/bin/${SERVICE}
 
-FROM alpine as yanagi-gate-server
-COPY --from=builder /app/target/release/yanagi-gate-server /usr/local/bin/
-CMD ["yanagi-gate-server"]
-
-FROM alpine as yanagi-game-server
-COPY --from=builder /app/target/release/yanagi-game-server /usr/local/bin/
-CMD ["yanagi-game-server"]
+# Use shell form ENTRYPOINT for dynamic resolution
+ENTRYPOINT sh -c "/usr/local/bin/$SERVICE"
