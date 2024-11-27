@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '**/Dockerfile'
+      - '**/Cargo.lock'
+      - '**/Cargo.toml'
+      - 'crates/**'
+      - 'autopatch/**'
   pull_request:
   workflow_dispatch:
 
@@ -27,7 +33,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
-          platforms: "all"
+          platforms: "linux/amd64,linux/arm64"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -41,19 +47,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push Images
+      - name: Build and Push Multi-Platform Images
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
           build-args: |
             SERVICE=${{ matrix.service }}
-          platforms: ${{ matrix.platform }}
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ghcr.io/garnetsunset/${{ matrix.service }}:latest
             ghcr.io/garnetsunset/${{ matrix.service }}:${{ github.event.after }}
-
-      - name: Post Success
-        if: success()
-        run: echo "Docker images for ${{ matrix.service }} have been successfully built and published!"
