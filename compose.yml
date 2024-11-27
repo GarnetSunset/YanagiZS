@@ -13,6 +13,8 @@ services:
     restart: unless-stopped
 
   yanagi-dispatch-server:
+    depends_on:
+      - yanagi-autopatch-server
     image: ghcr.io/garnetsunset/yanagi-dispatch-server:latest
     networks:
       - public
@@ -22,6 +24,8 @@ services:
     restart: unless-stopped
 
   yanagi-game-server:
+    depends_on:
+      - yanagi-autopatch-server
     image: ghcr.io/garnetsunset/yanagi-game-server:latest
     networks:
       - internal
@@ -30,6 +34,8 @@ services:
     restart: unless-stopped
 
   yanagi-gate-server:
+    depends_on:
+      - yanagi-autopatch-server
     image: ghcr.io/garnetsunset/yanagi-gate-server:latest
     networks:
       - public
@@ -39,6 +45,8 @@ services:
     restart: unless-stopped
 
   yanagi-sdk-server:
+    depends_on:
+      - yanagi-surrealdb
     image: ghcr.io/garnetsunset/yanagi-sdk-server:latest
     network_mode: service:yanagi-surrealdb
     restart: unless-stopped

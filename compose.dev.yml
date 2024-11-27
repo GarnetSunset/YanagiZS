@@ -21,6 +21,8 @@ services:
       context: .
       args:
         SERVICE: yanagi-dispatch-server
+    depends_on:
+      - yanagi-autopatch-server
     image: yanagi-dispatch-server:latest
     networks:
       - public
@@ -34,6 +36,8 @@ services:
       context: .
       args:
         SERVICE: yanagi-game-server
+    depends_on:
+      - yanagi-autopatch-server
     image: yanagi-game-server:latest
     networks:
       - internal
@@ -46,6 +50,8 @@ services:
       context: .
       args:
         SERVICE: yanagi-gate-server
+    depends_on:
+      - yanagi-autopatch-server
     image: yanagi-gate-server:latest
     networks:
       - public
@@ -59,6 +65,8 @@ services:
       context: .
       args:
         SERVICE: yanagi-sdk-server
+    depends_on:
+      - yanagi-surrealdb
     image: yanagi-sdk-server:latest
     network_mode: service:yanagi-surrealdb
     restart: unless-stopped

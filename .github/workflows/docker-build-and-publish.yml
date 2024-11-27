@@ -47,6 +47,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Get Timestamp
+        id: get_time
+        run: echo "timestamp=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
       - name: Build and Push Multi-Platform Images
         uses: docker/build-push-action@v4
         with:
@@ -56,6 +60,7 @@ jobs:
             SERVICE=${{ matrix.service }}
           platforms: linux/amd64,linux/arm64
           push: true
+          attests: false
           tags: |
             ghcr.io/garnetsunset/${{ matrix.service }}:latest
-            ghcr.io/garnetsunset/${{ matrix.service }}:${{ github.event.after }}
+            ghcr.io/garnetsunset/${{ matrix.service }}:${{ env.timestamp }}
