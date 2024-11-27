@@ -60,7 +60,6 @@ jobs:
             SERVICE=${{ matrix.service }}
           platforms: linux/amd64,linux/arm64
           push: true
-          attests: false
           tags: |
             ghcr.io/garnetsunset/${{ matrix.service }}:latest
             ghcr.io/garnetsunset/${{ matrix.service }}:${{ env.timestamp }}
